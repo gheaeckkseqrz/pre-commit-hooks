@@ -18,6 +18,7 @@ class Command:
         self.command = command
         self.files = []
         self.edit_in_place = False
+        self.compilation_database = None
 
         self.stdout = b""
         self.stderr = b""
@@ -37,6 +38,7 @@ class Command:
     def parse_args(self, args):
         """Parse the args into usable variables"""
         parser = argparse.ArgumentParser()
+        parser.add_argument("-p", type=str, help="Compilation database path")
         parser.add_argument("filenames", nargs="*", help="Filenames to check")
         parser.add_argument("--version", nargs=1, help="Version check")
         # Exclude this filename from args
@@ -45,6 +47,8 @@ class Command:
             expected_version = known_args.version[0]
             actual_version = self.get_version_str()
             self.assert_version(actual_version, expected_version)
+        if known_args.p:
+            self.args += ["-p", known_args.p]
         self.files = known_args.filenames
 
     def add_if_missing(self, new_args):
